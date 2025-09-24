@@ -40,7 +40,7 @@ public class CameraLocalization {
     public double getCamY() { return pose.getPosition().y; }
     public double getCamYaw () { return pose.getOrientation().getYaw(AngleUnit.RADIANS); }
 
-    public long getDelay() {
+    public long captureTime() {
         return now - (long)(delay * 1e6);}
 
     public void start() {

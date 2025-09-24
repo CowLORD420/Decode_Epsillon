@@ -48,6 +48,7 @@ public class Robot {
         cameraLocalization.update();
         pipeline.update();
         imu.update();
+        input.update();
     }
 
 }
