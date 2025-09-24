@@ -6,12 +6,25 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 public class Drive {
     private final Gamepad gamepad;
     private final IMU imu;
+    double x = 0;
+    double y = 0;
+    double cos = 0;
+    double sin = 0;
+
     public Drive(Gamepad gamepad, IMU imu){
         this.gamepad = gamepad;
         this.imu = imu;
     }
 
-    public double getYInput(){ return gamepad.left_stick_x * Math.toRadians(Math.cos(imu.getYaw())) + gamepad.left_stick_y * Math.toRadians(Math.sin(imu.getYaw())); }
-    public double getXInput(){ return gamepad.left_stick_x * Math.toRadians(Math.sin(imu.getYaw())) - gamepad.left_stick_y * Math.toRadians(Math.cos(imu.getYaw())); }
+    public void update(){
+        sin = Math.sin(imu.getYaw());
+        cos = Math.cos(imu.getYaw());
+
+        y = gamepad.left_stick_x * cos + gamepad.left_stick_y * sin;
+        x = gamepad.left_stick_x * sin - gamepad.left_stick_y * cos;
+    }
+
+    public double getYInput(){ return y; }
+    public double getXInput(){ return x; }
     public double getRxInput(){ return gamepad.right_stick_x; }
 }
