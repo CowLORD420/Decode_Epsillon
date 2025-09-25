@@ -1,22 +1,24 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import org.firstinspires.ftc.teamcode.hardware.Robot;
 import org.firstinspires.ftc.teamcode.scheduler.Command;
-import org.firstinspires.ftc.teamcode.subsystems.Pipeline;
 
-public class CameraScan implements Command {
-    private final Pipeline pipeline;
+public class UpdateHeading implements Command {
+    Robot robot;
 
-    public CameraScan (Pipeline pipeline){
-        this.pipeline = pipeline;
+    public UpdateHeading(Robot robot){
+        this.robot = robot;
     }
 
     @Override
     public void start() {
-        pipeline.start();
+
     }
 
     @Override
     public void update() {
+        robot.input.updateHeading(robot.pinpoint.getYaw());
+        robot.cameraLocalization.updateHeading(robot.pinpoint.getYaw());
     }
 
     @Override
@@ -26,6 +28,6 @@ public class CameraScan implements Command {
 
     @Override
     public void end() {
-        pipeline.stop();
+
     }
 }

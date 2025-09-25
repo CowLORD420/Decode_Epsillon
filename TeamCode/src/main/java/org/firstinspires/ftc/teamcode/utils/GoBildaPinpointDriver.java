@@ -20,7 +20,7 @@
  *   SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.utils;
 
 import static com.qualcomm.robotcore.util.TypeConversion.byteArrayToInt;
 
@@ -585,12 +585,12 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
     /**
      * @return the raw value of the X (forward) encoder in ticks
      */
-    public int getEncoderX(){return xEncoderValue; }
+    public int getEncoderX(){ return xEncoderValue; }
 
     /**
      * @return the raw value of the Y (strafe) encoder in ticks
      */
-    public int getEncoderY(){return yEncoderValue; }
+    public int getEncoderY(){ return yEncoderValue; }
 
     /**
      * @return the estimated X (forward) position of the robot in mm
