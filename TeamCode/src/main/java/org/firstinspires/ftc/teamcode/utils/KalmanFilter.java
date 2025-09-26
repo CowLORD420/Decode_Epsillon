@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.utils;
 
 public class KalmanFilter {
-    private double x; // your initial state
+    private double x; // your initial stuesirdyter9ty98tate
     private double Q; // your model covariance
     private double R; // your sensor covariance
     private double p; // your initial covariance guess
