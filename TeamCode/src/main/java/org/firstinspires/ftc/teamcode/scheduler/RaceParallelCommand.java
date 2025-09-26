@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RaceParallelCommand implements Command{
-    private List<Command> commands = new ArrayList<>();
+    private final List<Command> commands = new ArrayList<>();
 
     public RaceParallelCommand(Command... cmds) {
         for (Command c : cmds) {

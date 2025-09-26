@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import com.pedropathing.follower.Follower;
+import com.pedropathing.paths.Path;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.CameraLocalization;
 import org.firstinspires.ftc.teamcode.subsystems.DriveInput;
 import org.firstinspires.ftc.teamcode.subsystems.IMU;
@@ -20,6 +23,7 @@ public class Robot {
     public final DriveInput input;
     public final CameraLocalization cameraLocalization;
     public final Pinpoint pinpoint;
+    public final Follower follower;
 
     public Robot(HardwareMap hmap, Gamepad gamepad1){
         pipeline = new Pipeline(
@@ -46,6 +50,8 @@ public class Robot {
         pinpoint = new Pinpoint(
                 hmap.get(GoBildaPinpointDriver.class, "pinpoint")
         );
+
+        follower = Constants.createFollower(hmap);
 
     }
 
