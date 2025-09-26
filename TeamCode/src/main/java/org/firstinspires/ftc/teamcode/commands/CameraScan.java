@@ -9,7 +9,7 @@ public class CameraScan implements Command {
     public CameraScan (Pipeline pipeline){
         this.pipeline = pipeline;
     }
-
+// caca
     @Override
     public void start() {
         pipeline.start();
