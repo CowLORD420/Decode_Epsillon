@@ -1,68 +1,61 @@
 package org.firstinspires.ftc.teamcode.scheduler;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class SwitchCommandGroup implements Command {
-    private final HashMap<String, Command> commands = new HashMap<>();
+
+    private final Map<String, Command> commands = new HashMap<>();
     private String nameCommand;
     private String lastCommand;
     private final Command defaultCommand;
 
-    // Constructor with nameCommand
-    @SafeVarargs
-    public SwitchCommandGroup(String nameCommand, Command defaultCommand, HashMap<String, Command>... commandGroups) {
-        this.nameCommand = (nameCommand != null) ? nameCommand : "NaN";
+    private SwitchCommandGroup(Command defaultCommand, Map<String, Command> commands) {
         this.defaultCommand = defaultCommand;
-
-        for (HashMap<String, Command> group : commandGroups) {
-            commands.putAll(group);
-        }
-    }
-
-    // Constructor without nameCommand (defaults to "NaN")
-    @SafeVarargs
-    public SwitchCommandGroup(Command defaultCommand, HashMap<String, Command>... commandGroups) {
-        this("NaN", defaultCommand, commandGroups);
+        this.commands.putAll(commands);
+        this.nameCommand = null;
     }
 
     public void setCommand(String name) {
-        this.nameCommand = (name != null && commands.containsKey(name)) ? name : "NaN";
+        this.nameCommand = (name != null && commands.containsKey(name)) ? name : null;
+    }
+
+    private Command getActiveCommand() {
+        if (nameCommand == null) return defaultCommand;
+        return commands.get(nameCommand);
     }
 
     @Override
     public void start() {
         lastCommand = nameCommand;
-        if ("NaN".equals(nameCommand)) {
-            defaultCommand.start();
-        } else {
-            commands.get(nameCommand).start();
-        }
+        Command active = getActiveCommand();
+        if (active != null) active.start();
     }
 
     @Override
     public void update() {
+        Command active = getActiveCommand();
+
+
         if (!Objects.equals(nameCommand, lastCommand)) {
-            if ("NaN".equals(lastCommand)) {
-                defaultCommand.end();
-            } else {
-                commands.get(lastCommand).end();
-            }
 
-            if ("NaN".equals(nameCommand)) {
-                defaultCommand.start();
-            } else {
-                commands.get(nameCommand).start();
-            }
+            Command oldCommand = (lastCommand == null) ? defaultCommand : commands.get(lastCommand);
+            if (oldCommand != null) oldCommand.end();
 
+            if (active != null) active.start();
             lastCommand = nameCommand;
+            return;
         }
 
-        if ("NaN".equals(nameCommand)) {
-            defaultCommand.update();
-        } else {
-            commands.get(nameCommand).update();
+        if (active != null && active.isFinished()) {
+            active.end();
+
+            lastCommand = null;
+            return;
         }
+
+        if (active != null) active.update();
     }
 
     @Override
@@ -72,10 +65,26 @@ public class SwitchCommandGroup implements Command {
 
     @Override
     public void end() {
-        if ("NaN".equals(lastCommand)) {
-            defaultCommand.end();
-        } else {
-            commands.get(lastCommand).end();
+        Command active = getActiveCommand();
+        if (active != null) active.end();
+    }
+
+    public static class Builder {
+        private final Map<String, Command> commands = new HashMap<>();
+        private Command defaultCommand;
+
+        public Builder setDefault(Command defaultCommand) {
+            this.defaultCommand = defaultCommand;
+            return this;
+        }
+
+        public Builder add(String name, Command command) {
+            commands.put(name, command);
+            return this;
+        }
+
+        public SwitchCommandGroup build() {
+            return new SwitchCommandGroup(defaultCommand, commands);
         }
     }
 }

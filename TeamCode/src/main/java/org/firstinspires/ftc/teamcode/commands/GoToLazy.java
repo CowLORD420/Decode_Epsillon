@@ -3,31 +3,33 @@ package org.firstinspires.ftc.teamcode.commands;
 import org.firstinspires.ftc.teamcode.hardware.Robot;
 import org.firstinspires.ftc.teamcode.scheduler.Command;
 
-public class UpdateHeading implements Command {
-    Robot robot;
+public class GoToLazy implements Command {
+    private final Robot robot;
+    private final String pathname;
 
-    public UpdateHeading(Robot robot){
+    public GoToLazy(Robot robot, String pathName){
         this.robot = robot;
+        this.pathname = pathName;
     }
 
     @Override
     public void start() {
-
+        robot.pedro.start();
+        robot.pedro.followLazyPath(pathname);
     }
 
     @Override
     public void update() {
-        robot.input.updateHeading(robot.pinpoint.getYaw());
-        robot.cameraLocalization.updateHeading(robot.pinpoint.getYaw());
+
     }
 
     @Override
     public boolean isFinished() {
-        return false;
+        return robot.pedro.finished();
     }
 
     @Override
     public void end() {
-
+        robot.pedro.stop();
     }
 }
