@@ -58,6 +58,8 @@ public class Robot {
         pedro = new Pedro(follower);
 
         paths = new Paths(follower, pedro);
+
+        paths.registerPaths();
     }
 
     public void update(){

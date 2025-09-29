@@ -20,10 +20,6 @@ public class Pedro {
         this.follower = follower;
     }
 
-    public void setCurrentPose(){
-        follower.setPose(currentPose);
-    }
-
     public void addLazyPath(String name, Supplier<PathChain> pathSupplier){
         lazyPaths.put(name, pathSupplier);
     }
@@ -40,7 +36,7 @@ public class Pedro {
         prebuiltPaths.put(name, path);
     }
 
-    public void followPrebuiltPath(String name){
+    public void followPath(String name){
         PathChain path = prebuiltPaths.get(name);
         if(path != null){
             follower.followPath(path, true);
