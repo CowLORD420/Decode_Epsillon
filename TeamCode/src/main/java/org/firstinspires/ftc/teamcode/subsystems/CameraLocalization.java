@@ -5,6 +5,8 @@ import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 import java.util.List;
@@ -50,6 +52,7 @@ public class CameraLocalization {
         yaw = headingInRadians;
     }
 
+    public Pose2D getPose2d(){ return Pose3Dto2D(pose); }
     public int getLatestTagId() { return latestTagId; }
     public double getCamX() { return pose.getPosition().x; }
     public double getCamY() { return pose.getPosition().y; }
@@ -66,4 +69,8 @@ public class CameraLocalization {
         pose = null;
     }
 
+    private Pose2D Pose3Dto2D (Pose3D pose3D){
+        Pose2D pose2D = new Pose2D(DistanceUnit.INCH, pose3D.getPosition().x, pose3D.getPosition().y, AngleUnit.RADIANS, pose3D.getOrientation().getYaw(AngleUnit.RADIANS));
+        return pose2D;
+    }
 }

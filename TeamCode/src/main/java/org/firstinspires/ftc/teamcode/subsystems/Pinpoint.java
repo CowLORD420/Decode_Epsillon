@@ -9,6 +9,8 @@ public class Pinpoint {
     GoBildaPinpointDriver pinpoint;
     private Pose2D pose;
     private double yaw;
+    private double x;
+    private double y;
 
     public Pinpoint(GoBildaPinpointDriver pinpoint){
         this.pinpoint = pinpoint;
@@ -26,6 +28,8 @@ public class Pinpoint {
     public void update(){
         pose = pinpoint.getPosition();
         yaw = pose.getHeading(AngleUnit.RADIANS);
+        x = pose.getX(DistanceUnit.INCH);
+        y = pose.getY(DistanceUnit.INCH);
     }
 
     public void resetPose(Pose2D updatedPose){
@@ -35,6 +39,8 @@ public class Pinpoint {
     public double getYaw(){
         return yaw;
     }
+    public double getX(){ return x; }
+    public double getY(){ return y; }
 
     public Pose2D getPose(){
         return pose;
