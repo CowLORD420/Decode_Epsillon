@@ -6,6 +6,7 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+//pula
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.CameraLocalization;
@@ -19,7 +20,6 @@ import org.firstinspires.ftc.teamcode.utils.GoBildaPinpointDriver;
 public class Robot {
     public final Pipeline pipeline;
     public final MecanumDrive mecanumDrive;
-    public final IMU imu;
     public final DriveInput input;
     public final CameraLocalization cameraLocalization;
     public final Pinpoint pinpoint;
