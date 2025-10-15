@@ -26,6 +26,12 @@ public class CommandScheduler {
         }
     }
 
+    public void cancel(Command command){
+        if (activeCommands.remove(command)) {
+            command.end();
+        }
+    }
+
     public void cancelAll() {
         for (Command c : activeCommands) {
             c.end();

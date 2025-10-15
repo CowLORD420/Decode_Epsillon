@@ -29,6 +29,7 @@ public class Robot {
     public final Follower follower;
 
     public Robot(HardwareMap hmap, Gamepad gamepad1){
+
         pipeline = new Pipeline(
                 hmap.get(Limelight3A.class, "Limelight")
         );
