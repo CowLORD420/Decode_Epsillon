@@ -7,8 +7,10 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.scheduler.CommandScheduler;
 import org.firstinspires.ftc.teamcode.subsystems.CameraLocalization;
 import org.firstinspires.ftc.teamcode.subsystems.DriveInput;
+import org.firstinspires.ftc.teamcode.subsystems.GamepadWrapper;
 import org.firstinspires.ftc.teamcode.subsystems.IMU;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Pedro;
@@ -27,8 +29,15 @@ public class Robot {
     public final Pedro pedro;
     public final Paths paths;
     public final Follower follower;
+    public final GamepadWrapper wrapper;
+    public final CommandScheduler scheduler;
 
     public Robot(HardwareMap hmap, Gamepad gamepad1){
+        scheduler = new CommandScheduler();
+
+        wrapper = new GamepadWrapper.Builder(gamepad1, scheduler)
+                .build();
+
 
         pipeline = new Pipeline(
                 hmap.get(Limelight3A.class, "Limelight")
