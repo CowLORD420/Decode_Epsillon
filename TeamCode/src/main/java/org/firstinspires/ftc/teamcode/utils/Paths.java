@@ -15,30 +15,92 @@ public class Paths {
     private final Follower follower;
     private Pose currentPose;
 
+    Pose startPose = new Pose(0,0,Math.toRadians(0));
+    Pose endPose = new Pose(50, 50, Math.toRadians(90));
+
+    public enum LazyPaths {
+        SCORE1("score1", 0, 0, Math.toRadians(50)),
+        SCORE2("score2", 10, 5, Math.toRadians(90));
+
+        private final String name;
+        private final Pose pose;
+
+        LazyPaths(String name, double x, double y, double heading) {
+            this.name = name;
+            this.pose = new Pose(x, y, heading);
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public Pose getPose() {
+            return pose;
+        }
+    }
+
+    /*public enum LazyPaths{
+        SCORE1("score1"),
+        SCORE2("score2");
+        private final String name;
+
+        LazyPaths(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }*/
+
+    public enum PrebuiltPaths {
+        AUTO1("auto1");
+
+        private final String name;
+
+        PrebuiltPaths(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+
+    /*public enum EndPose{
+        SCORE1(0, 0, Math.toRadians(50));
+
+        private final Pose pose;
+
+        EndPose(double x, double y, double heading) {
+            this.pose = new Pose(x, y, heading);
+        }
+
+        public Pose getPose() {
+            return pose;
+        }
+    }*/
+
     public Paths(Follower follower, Pedro pedro){
         this.follower = follower;
         this.pedro = pedro;
     }
 
-    Pose startPose = new Pose(0,0,0);
-    Pose endPose = new Pose(50, 50, Math.toRadians(90));
-
-    public void registerPaths() {
-
-        pedro.addPrebuiltPath("auto1", prebuiltPath(startPose, endPose));
-
-        pedro.addLazyPath("score1", lazyPath(45, 98, 45));
-        pedro.addLazyPath("score2", lazyPath(80, 120, 90));
+    public void registerLazyPath(String pathName, Pose pose){
+        pedro.addLazyPath(pathName, lazyPath(pose));
     }
 
-    private Supplier<PathChain> lazyPath(double x, double y, double headingDeg){
+    public void registerPrebuiltPaths() {
+        pedro.addPrebuiltPath(PrebuiltPaths.AUTO1.getName(), prebuiltPath(startPose, endPose));
+    }
+
+    private Supplier<PathChain> lazyPath(Pose pose){
         return () -> {
             Pose start = currentPose;
-            Pose end = new Pose(x, y, Math.toRadians(headingDeg));
 
             return follower.pathBuilder()
-                    .addPath(new Path(new BezierLine(start, end)))
-                    .setLinearHeadingInterpolation(start.getHeading(), end.getHeading())
+                    .addPath(new Path(new BezierLine(start, pose)))
+                    .setLinearHeadingInterpolation(start.getHeading(), pose.getHeading())
                     .build();
         };
     }

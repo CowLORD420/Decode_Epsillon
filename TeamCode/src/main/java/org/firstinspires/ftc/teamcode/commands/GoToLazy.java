@@ -2,20 +2,22 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import org.firstinspires.ftc.teamcode.hardware.Robot;
 import org.firstinspires.ftc.teamcode.scheduler.Command;
+import org.firstinspires.ftc.teamcode.utils.Paths;
 
 public class GoToLazy implements Command {
     private final Robot robot;
-    private final String pathname;
+    private final Paths.LazyPaths path;
 
-    public GoToLazy(Robot robot, String pathName){
+    public GoToLazy(Robot robot, Paths.LazyPaths path) {
         this.robot = robot;
-        this.pathname = pathName;
+        this.path = path;
     }
 
     @Override
     public void start() {
         robot.pedro.start();
-        robot.pedro.followLazyPath(pathname);
+        robot.paths.registerLazyPath(path.getName(), path.getPose());
+        robot.pedro.followLazyPath(path.getName());
     }
 
     @Override
@@ -30,6 +32,7 @@ public class GoToLazy implements Command {
 
     @Override
     public void end() {
+        robot.pedro.removeLazyPath(path.getName());
         robot.pedro.stop();
     }
 }

@@ -68,11 +68,11 @@ public class Robot {
         pedro = new Pedro(follower);
 
         paths = new Paths(follower, pedro);
-
-        paths.registerPaths();
+        paths.registerPrebuiltPaths();
     }
 
     public void update(){
+        wrapper.update();
         pinpoint.update();
         cameraLocalization.update();
         pipeline.update();

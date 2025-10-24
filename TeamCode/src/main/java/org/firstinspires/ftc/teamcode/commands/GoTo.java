@@ -2,26 +2,25 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import org.firstinspires.ftc.teamcode.hardware.Robot;
 import org.firstinspires.ftc.teamcode.scheduler.Command;
+import org.firstinspires.ftc.teamcode.utils.Paths;
 
 public class GoTo implements Command {
     private final Robot robot;
-    private final String pathname;
+    private final Paths.PrebuiltPaths path;
 
-    public GoTo(Robot robot, String pathName){
+    public GoTo(Robot robot, Paths.PrebuiltPaths path) {
         this.robot = robot;
-        this.pathname = pathName;
+        this.path = path;
     }
 
     @Override
     public void start() {
         robot.pedro.start();
-        robot.pedro.followPath(pathname);
+        robot.pedro.followPath(path.getName());
     }
 
     @Override
-    public void update() {
-
-    }
+    public void update() { }
 
     @Override
     public boolean isFinished() {
@@ -30,6 +29,7 @@ public class GoTo implements Command {
 
     @Override
     public void end() {
+        robot.pedro.removeLazyPath(path.getName());
         robot.pedro.stop();
     }
 }

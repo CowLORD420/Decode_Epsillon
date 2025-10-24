@@ -24,16 +24,24 @@ public class Pedro {
         lazyPaths.put(name, pathSupplier);
     }
 
+    public void removeLazyPath(String name){
+        lazyPaths.remove(name);
+    }
+
     public void followLazyPath(String name){
         Supplier<PathChain> supplier = lazyPaths.get(name);
         if(supplier != null){
-            PathChain path = supplier.get(); // build path at runtime
+            PathChain path = supplier.get();
             follower.followPath(path, true);
         }
     }
 
     public void addPrebuiltPath(String name, PathChain path){
         prebuiltPaths.put(name, path);
+    }
+
+    public void removePrebuiltPath(String name){
+        prebuiltPaths.remove(name);
     }
 
     public void followPath(String name){
