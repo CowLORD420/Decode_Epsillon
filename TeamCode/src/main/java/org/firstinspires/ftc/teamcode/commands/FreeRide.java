@@ -2,12 +2,16 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import org.firstinspires.ftc.teamcode.hardware.Robot;
 import org.firstinspires.ftc.teamcode.scheduler.Command;
+import org.firstinspires.ftc.teamcode.subsystems.DriveInput;
+import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
 
 public class FreeRide implements Command {
-    private final Robot robot;
+    private final MecanumDrive mecanumDrive;
+    private final DriveInput input;
 
-    public FreeRide(Robot robot){
-        this.robot = robot;
+    public FreeRide(MecanumDrive mecanumDrive, DriveInput driveInput){
+        this.mecanumDrive = mecanumDrive;
+        input = driveInput;
     }
 
     @Override
@@ -17,10 +21,10 @@ public class FreeRide implements Command {
 
     @Override
     public void update() {
-        double y = robot.input.getYInput();
-        double x = robot.input.getXInput();
-        double rx = robot.input.getRxInput();
-        robot.mecanumDrive.drive(y, x, rx);
+        double y = input.getYInput();
+        double x = input.getXInput();
+        double rx = input.getRxInput();
+        mecanumDrive.drive(y, x, rx);
     }
 
     @Override
@@ -30,6 +34,6 @@ public class FreeRide implements Command {
 
     @Override
     public void end() {
-        robot.mecanumDrive.drive(0, 0, 0);
+        mecanumDrive.drive(0, 0, 0);
     }
 }

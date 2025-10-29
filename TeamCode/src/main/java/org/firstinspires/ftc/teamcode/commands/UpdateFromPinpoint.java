@@ -4,12 +4,32 @@ import com.pedropathing.geometry.Pose;
 
 import org.firstinspires.ftc.teamcode.hardware.Robot;
 import org.firstinspires.ftc.teamcode.scheduler.Command;
+import org.firstinspires.ftc.teamcode.subsystems.CameraLocalization;
+import org.firstinspires.ftc.teamcode.subsystems.DriveInput;
+import org.firstinspires.ftc.teamcode.subsystems.Pedro;
+import org.firstinspires.ftc.teamcode.subsystems.Pinpoint;
+import org.firstinspires.ftc.teamcode.utils.Paths;
 
 public class UpdateFromPinpoint implements Command {
-    Robot robot;
+    private final Paths paths;
+    private final Pedro pedro;
+    private final DriveInput input;
+    private final CameraLocalization cameraLocalization;
+    private final Pinpoint pinpoint;
 
-    public UpdateFromPinpoint(Robot robot){
-        this.robot = robot;
+    public UpdateFromPinpoint(
+            Pinpoint pinpoint,
+            Paths paths,
+            Pedro pedro,
+            DriveInput input,
+            CameraLocalization cameraLocalization
+    )
+    {
+        this.pinpoint = pinpoint;
+        this.paths = paths;
+        this.pedro = pedro;
+        this.input = input;
+        this.cameraLocalization = cameraLocalization;
     }
 
     @Override
@@ -19,11 +39,11 @@ public class UpdateFromPinpoint implements Command {
 
     @Override
     public void update() {
-        Pose currentPose = new Pose(robot.pinpoint.getX(), robot.pinpoint.getY(), robot.pinpoint.getYaw());
-        robot.paths.updatePose(currentPose);
-        robot.pedro.updatePose(currentPose);
-        robot.input.updateHeading(robot.pinpoint.getYaw());
-        robot.cameraLocalization.updateHeading(robot.pinpoint.getYaw());
+        Pose currentPose = new Pose(pinpoint.getX(), pinpoint.getY(), pinpoint.getYaw());
+        paths.updatePose(currentPose);
+        pedro.updatePose(currentPose);
+        input.updateHeading(pinpoint.getYaw());
+        cameraLocalization.updateHeading(pinpoint.getYaw());
     }
 
     @Override

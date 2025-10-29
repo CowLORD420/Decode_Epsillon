@@ -68,10 +68,14 @@ public class Robot {
         pedro = new Pedro(follower);
 
         paths = new Paths(follower, pedro);
+    }
+
+    public void init(){
         paths.registerPrebuiltPaths();
     }
 
     public void update(){
+        scheduler.update();
         wrapper.update();
         pinpoint.update();
         cameraLocalization.update();
@@ -80,4 +84,7 @@ public class Robot {
         pedro.update();
     }
 
+    public void stop(){
+        scheduler.cancelAll();
+    }
 }

@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.scheduler.CommandScheduler;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class GamepadWrapper {
     public enum Button {
@@ -23,18 +24,20 @@ public class GamepadWrapper {
     private final Gamepad gamepad;
     private final CommandScheduler scheduler;
 
-    private final Map<Button, Command> onPress = new HashMap<>();
-    private final Map<Button, Command> whileHeld = new HashMap<>();
+    private final Map<Button, Supplier<Command>> onPress = new HashMap<>();
+    private final Map<Button, Supplier<Command>> whileHeld = new HashMap<>();
     private final Map<Analog, AnalogBinding> analogThresholds = new HashMap<>();
     private final Map<Button, Boolean> previousButtonStates = new HashMap<>();
+    private final Map<Analog, Boolean> previousAnalogAbove = new HashMap<>();
+    private final Map<Button, Command> activeHeldCommands = new HashMap<>();
 
     private static class AnalogBinding {
         double threshold;
-        Command command;
+        Supplier<Command> commandSupplier;
 
-        AnalogBinding(double threshold, Command command) {
+        AnalogBinding(double threshold, Supplier<Command> commandSupplier) {
             this.threshold = threshold;
-            this.command = command;
+            this.commandSupplier = commandSupplier;
         }
     }
 
@@ -45,39 +48,51 @@ public class GamepadWrapper {
 
     /** Call this every loop */
     public void update() {
-        for (Map.Entry<Button, Command> entry : onPress.entrySet()) {
-            boolean current = getButtonState(entry.getKey());
-            boolean previous = previousButtonStates.getOrDefault(entry.getKey(), false);
+        // onPress
+        for (Map.Entry<Button, Supplier<Command>> entry : onPress.entrySet()) {
+            Button button = entry.getKey();
+            boolean current = getButtonState(button);
+            boolean previous = previousButtonStates.getOrDefault(button, false);
 
             if (current && !previous) {
-                scheduler.schedule(entry.getValue());
+                scheduler.schedule(entry.getValue().get());
             }
 
-            previousButtonStates.put(entry.getKey(), current);
+            previousButtonStates.put(button, current);
         }
 
-        // whileHeld (keep scheduling as long as held)
-        for (Map.Entry<Button, Command> entry : whileHeld.entrySet()) {
-            if (getButtonState(entry.getKey())) {
-                if (!scheduler.isScheduled(entry.getValue())) {
-                    scheduler.schedule(entry.getValue());
+        // whileHeld
+        for (Map.Entry<Button, Supplier<Command>> entry : whileHeld.entrySet()) {
+            Button button = entry.getKey();
+            boolean pressed = getButtonState(button);
+            Command activeCommand = activeHeldCommands.get(button);
+
+            if (pressed) {
+                if (activeCommand == null || !scheduler.isScheduled(activeCommand)) {
+                    Command cmd = entry.getValue().get();
+                    scheduler.schedule(cmd);
+                    activeHeldCommands.put(button, cmd);
                 }
             } else {
-                if (scheduler.isScheduled(entry.getValue())) {
-                    scheduler.cancel(entry.getValue());
+                if (activeCommand != null && scheduler.isScheduled(activeCommand)) {
+                    scheduler.cancel(activeCommand);
                 }
+                activeHeldCommands.remove(button);
             }
         }
 
+        // analog thresholds
         for (Map.Entry<Analog, AnalogBinding> entry : analogThresholds.entrySet()) {
-            double value = getAnalogInput(entry.getKey());
-            AnalogBinding binding = entry.getValue();
+            Analog analog = entry.getKey();
+            double value = getAnalogInput(analog);
+            boolean above = Math.abs(value) > entry.getValue().threshold;
+            boolean wasAbove = previousAnalogAbove.getOrDefault(analog, false);
 
-            boolean above = Math.abs(value) > binding.threshold;
-
-            if (above && !scheduler.isScheduled(binding.command)) {
-                scheduler.schedule(binding.command);
+            if (above && !wasAbove) {
+                scheduler.schedule(entry.getValue().commandSupplier.get());
             }
+
+            previousAnalogAbove.put(analog, above);
         }
     }
 
@@ -116,22 +131,22 @@ public class GamepadWrapper {
             wrapper = new GamepadWrapper(gamepad, scheduler);
         }
 
-        public Builder(GamepadWrapper wrapper){
+        public Builder(GamepadWrapper wrapper) {
             this.wrapper = wrapper;
         }
 
-        public Builder onPress(Button button, Command command) {
-            wrapper.onPress.put(button, command);
+        public Builder onPress(Button button, Supplier<Command> commandSupplier) {
+            wrapper.onPress.put(button, commandSupplier);
             return this;
         }
 
-        public Builder whileHeld(Button button, Command command) {
-            wrapper.whileHeld.put(button, command);
+        public Builder whileHeld(Button button, Supplier<Command> commandSupplier) {
+            wrapper.whileHeld.put(button, commandSupplier);
             return this;
         }
 
-        public Builder whenAbove(Analog analog, double threshold, Command command) {
-            wrapper.analogThresholds.put(analog, new AnalogBinding(threshold, command));
+        public Builder whenAbove(Analog analog, double threshold, Supplier<Command> commandSupplier) {
+            wrapper.analogThresholds.put(analog, new AnalogBinding(threshold, commandSupplier));
             return this;
         }
 
