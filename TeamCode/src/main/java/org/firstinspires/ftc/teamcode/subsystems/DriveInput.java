@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
-// sa nu uiti sa bagi in loc de imu kalman filter (: daca il mai fac
 
 public class DriveInput {
     private final Gamepad gamepad;
@@ -15,8 +14,8 @@ public class DriveInput {
     }
 
     public void update(){
-        y = gamepad.left_stick_x * cos - (-gamepad.left_stick_y) * sin;
-        x = gamepad.left_stick_x * sin + (-gamepad.left_stick_y) * cos;
+        y = -gamepad.left_stick_y * cos - gamepad.left_stick_x * sin;
+        x = -gamepad.left_stick_y * sin + gamepad.left_stick_x * cos;
     }
 
 
@@ -26,7 +25,7 @@ public class DriveInput {
         sin = Math.sin(headingInRadians);
     }
 
-    public double getYInput(){ return y; }
-    public double getXInput(){ return x; }
-    public double getRxInput(){ return gamepad.right_stick_x; }
+    public double getY(){ return y; }
+    public double getX(){ return x; }
+    public double getRx(){ return gamepad.right_stick_x; }
 }

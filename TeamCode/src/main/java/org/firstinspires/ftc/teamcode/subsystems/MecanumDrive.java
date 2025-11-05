@@ -19,10 +19,10 @@ public class MecanumDrive {
         this.lf = lf;
         this.rf = rf;
 
-        lb.setDirection(DcMotorSimple.Direction.FORWARD);
-        lf.setDirection(DcMotorSimple.Direction.FORWARD);
-        rf.setDirection(DcMotorSimple.Direction.REVERSE);
-        rb.setDirection(DcMotorSimple.Direction.REVERSE);
+        lb.setDirection(DcMotorSimple.Direction.REVERSE);
+        lf.setDirection(DcMotorSimple.Direction.REVERSE);
+        rf.setDirection(DcMotorSimple.Direction.FORWARD);
+        rb.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
         public void drive(double y, double x, double rot){

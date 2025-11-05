@@ -26,6 +26,7 @@ public class Pinpoint {
     }
 
     public void update(){
+        pinpoint.update();
         pose = pinpoint.getPosition();
         yaw = pose.getHeading(AngleUnit.RADIANS);
         x = pose.getX(DistanceUnit.INCH);
