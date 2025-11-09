@@ -1,90 +1,105 @@
 package org.firstinspires.ftc.teamcode.scheduler;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 
-public class SwitchCommandGroup implements Command {
+public class SwitchCommandGroup<E extends Enum<E>> implements Command {
 
-    private final Map<String, Command> commands = new HashMap<>();
-    private String nameCommand;
-    private String lastCommand;
-    private final Command defaultCommand;
+    private final Map<E, Supplier<Command>> commandSuppliers;
+    private final Supplier<Command> defaultCommandSupplier;
 
-    private SwitchCommandGroup(Command defaultCommand, Map<String, Command> commands) {
-        this.defaultCommand = defaultCommand;
-        this.commands.putAll(commands);
-        this.nameCommand = null;
+    private E nameCommand;
+    private E lastCommand;
+    private Command activeCommand;
+
+    private SwitchCommandGroup(Supplier<Command> defaultCommandSupplier, Map<E, Supplier<Command>> commandSuppliers) {
+        this.defaultCommandSupplier = defaultCommandSupplier;
+        this.commandSuppliers = new EnumMap<>(commandSuppliers);
     }
 
-    public void setCommand(String name) {
-        this.nameCommand = (name != null && commands.containsKey(name)) ? name : null;
+    public void setCommand(E name) {
+        this.nameCommand = (name != null && commandSuppliers.containsKey(name)) ? name : null;
     }
 
-    private Command getActiveCommand() {
-        if (nameCommand == null) return defaultCommand;
-        return commands.get(nameCommand);
+    private Command getNewCommandInstance(E name) {
+        if (name == null) return defaultCommandSupplier.get();
+        Supplier<Command> supplier = commandSuppliers.get(name);
+        return (supplier != null) ? supplier.get() : defaultCommandSupplier.get();
     }
 
     @Override
     public void start() {
         lastCommand = nameCommand;
-        Command active = getActiveCommand();
-        if (active != null) active.start();
+        activeCommand = getNewCommandInstance(nameCommand);
+        if (activeCommand != null) activeCommand.start();
     }
 
     @Override
     public void update() {
-        Command active = getActiveCommand();
-
-
+        // --- Case 1: The selected command changed ---
         if (!Objects.equals(nameCommand, lastCommand)) {
+            if (activeCommand != null) activeCommand.end();
 
-            Command oldCommand = (lastCommand == null) ? defaultCommand : commands.get(lastCommand);
-            if (oldCommand != null) oldCommand.end();
+            activeCommand = getNewCommandInstance(nameCommand);
+            if (activeCommand != null) activeCommand.start();
 
-            if (active != null) active.start();
             lastCommand = nameCommand;
             return;
         }
 
-        if (active != null && active.isFinished()) {
-            active.end();
+        // --- Case 2: Active command finished ---
+        if (activeCommand != null && activeCommand.isFinished()) {
+            activeCommand.end();
 
+            // Immediately return to default
+            nameCommand = null;
             lastCommand = null;
+
+            activeCommand = getNewCommandInstance(null); // default command
+            if (activeCommand != null) activeCommand.start();
             return;
         }
 
-        if (active != null) active.update();
+        // --- Case 3: Normal update ---
+        if (activeCommand != null) activeCommand.update();
     }
 
     @Override
     public boolean isFinished() {
-        return false;
+        return false; // the group itself never finishes
     }
 
     @Override
     public void end() {
-        Command active = getActiveCommand();
-        if (active != null) active.end();
+        if (activeCommand != null) activeCommand.end();
     }
 
-    public static class Builder {
-        private final Map<String, Command> commands = new HashMap<>();
-        private Command defaultCommand;
+    // -------------------- Builder --------------------
+    public static class Builder<E extends Enum<E>> {
+        private final Map<E, Supplier<Command>> commandSuppliers;
+        private Supplier<Command> defaultCommandSupplier;
 
-        public Builder setDefault(Command defaultCommand) {
-            this.defaultCommand = defaultCommand;
+        public Builder(Class<E> enumClass) {
+            this.commandSuppliers = new EnumMap<>(enumClass);
+        }
+
+        public Builder<E> setDefault(Supplier<Command> defaultCommandSupplier) {
+            this.defaultCommandSupplier = defaultCommandSupplier;
             return this;
         }
 
-        public Builder add(String name, Command command) {
-            commands.put(name, command);
+        public Builder<E> add(E name, Supplier<Command> commandSupplier) {
+            commandSuppliers.put(name, commandSupplier);
             return this;
         }
 
-        public SwitchCommandGroup build() {
-            return new SwitchCommandGroup(defaultCommand, commands);
+        public SwitchCommandGroup<E> build() {
+            if (defaultCommandSupplier == null) {
+                throw new IllegalStateException("Default command supplier must be set.");
+            }
+            return new SwitchCommandGroup<>(defaultCommandSupplier, commandSuppliers);
         }
     }
 }

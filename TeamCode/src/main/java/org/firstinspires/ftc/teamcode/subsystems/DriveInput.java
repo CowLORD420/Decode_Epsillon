@@ -11,7 +11,7 @@ public class DriveInput {
     private double rot = 0;
     private double cos = 0;
     private double sin = 0;
-    private double epsilon = 0.39;
+    private final double epsilon = 0.39;
 
     public DriveInput(Gamepad gamepad){
         this.gamepad = gamepad;

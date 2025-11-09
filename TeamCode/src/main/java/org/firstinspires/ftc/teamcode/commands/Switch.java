@@ -3,10 +3,12 @@ package org.firstinspires.ftc.teamcode.commands;
 import org.firstinspires.ftc.teamcode.scheduler.Command;
 import org.firstinspires.ftc.teamcode.scheduler.SwitchCommandGroup;
 
-public class Switch implements Command {
-    SwitchCommandGroup switchCommandGroup;
-    String name;
-    public Switch(SwitchCommandGroup switchCommandGroup, String name){
+public class Switch<E extends Enum<E>> implements Command {
+
+    private final SwitchCommandGroup<E> switchCommandGroup;
+    private final E name;
+
+    public Switch(SwitchCommandGroup<E> switchCommandGroup, E name) {
         this.switchCommandGroup = switchCommandGroup;
         this.name = name;
     }
@@ -28,6 +30,5 @@ public class Switch implements Command {
 
     @Override
     public void end() {
-
     }
 }

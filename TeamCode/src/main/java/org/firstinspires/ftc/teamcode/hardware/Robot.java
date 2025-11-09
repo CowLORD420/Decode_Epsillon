@@ -22,7 +22,6 @@ import org.firstinspires.ftc.teamcode.utils.Paths;
 public class Robot {
     public final Pipeline pipeline;
     public final MecanumDrive mecanumDrive;
-    public final IMU imu;
     public final DriveInput input;
     public final CameraLocalization cameraLocalization;
     public final Pinpoint pinpoint;
@@ -50,10 +49,6 @@ public class Robot {
                 hmap.get(DcMotorEx.class, "rb")
         );
 
-        imu = new IMU(
-          hmap.get(com.qualcomm.robotcore.hardware.IMU.class, "IMU")
-        );
-
         cameraLocalization = new CameraLocalization(
                 hmap.get(Limelight3A.class, "limelight_2")
         );
@@ -63,6 +58,7 @@ public class Robot {
         pinpoint = new Pinpoint(
                 hmap.get(GoBildaPinpointDriver.class, "pinpoint")
         );
+
         follower = Constants.createFollower(hmap);
 
         pedro = new Pedro(follower);

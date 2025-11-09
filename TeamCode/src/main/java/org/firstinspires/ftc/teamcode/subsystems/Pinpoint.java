@@ -12,6 +12,7 @@ public class Pinpoint {
     private double x;
     private double y;
 
+    /** nu uita sa pui directia la encodere si offsetu **/
     public Pinpoint(GoBildaPinpointDriver pinpoint){
         this.pinpoint = pinpoint;
 
@@ -33,13 +34,9 @@ public class Pinpoint {
         y = pose.getY(DistanceUnit.INCH);
     }
 
-    public void resetPose(Pose2D updatedPose){
-        pinpoint.setPosition(updatedPose);
-    }
+    public void resetPose(Pose2D updatedPose){ pinpoint.setPosition(updatedPose); }
 
-    public double getYaw(){
-        return yaw;
-    }
+    public double getYaw(){ return yaw; }
     public double getX(){ return x; }
     public double getY(){ return y; }
 
