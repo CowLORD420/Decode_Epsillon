@@ -9,10 +9,13 @@ public class FreeRide implements Command {
     private final MecanumDrive mecanumDrive;
     private final DriveInput input;
     private final Pinpoint pinpoint;
-    public FreeRide(MecanumDrive mecanumDrive, DriveInput driveInput, Pinpoint pinpoint){
+    private final double maxSpeed;
+
+    public FreeRide(MecanumDrive mecanumDrive, DriveInput driveInput, Pinpoint pinpoint, double maxSpeed){
         this.mecanumDrive = mecanumDrive;
         input = driveInput;
         this.pinpoint = pinpoint;
+        this.maxSpeed = maxSpeed;
     }
 
     @Override
@@ -23,9 +26,9 @@ public class FreeRide implements Command {
     @Override
     public void update() {
         input.updateHeading(pinpoint.getYaw());
-        double y = input.getY();
-        double x = input.getX();
-        double rx = input.getRx();
+        double y = input.getY() * maxSpeed;
+        double x = input.getX() * maxSpeed;
+        double rx = input.getRx() * maxSpeed;
         mecanumDrive.drive(y, x, rx);
     }
 

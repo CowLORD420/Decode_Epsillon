@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.utils;
 
+//shit don't use (: love
+
 public class KalmanFilter {
     private double x; // your initial state
     private double Q; // your model covariance

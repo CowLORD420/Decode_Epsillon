@@ -33,11 +33,7 @@ public class MecanumDrive {
             double back_left   = y - x + rot;
             double back_right  = y + x - rot;
 
-            double max = Math.max(1.0, Math.max(
-                    Math.abs(front_left),
-                    Math.max(Math.abs(front_right),
-                            Math.max(Math.abs(back_left), Math.abs(back_right)))
-            ));
+            double max = Math.max(1.0, Math.max(Math.abs(front_left), Math.max(Math.abs(front_right), Math.max(Math.abs(back_left), Math.abs(back_right)))));
 
             front_left  /= max;
             front_right /= max;

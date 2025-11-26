@@ -21,9 +21,10 @@ public class DriveInput {
         rot = gamepad.right_stick_x;
         y = -gamepad.left_stick_y * cos - gamepad.left_stick_x * sin;
         x = -gamepad.left_stick_y * sin + gamepad.left_stick_x * cos;
-        x *= epsilon;
-        y *= epsilon;
-        rot *= epsilon;
+
+        x = Math.copySign(Math.pow(Math.abs(x), epsilon), x);
+        y = Math.copySign(Math.pow(Math.abs(y), epsilon), y);
+        rot = Math.copySign(Math.pow(Math.abs(rot), epsilon), rot);
     }
 
 

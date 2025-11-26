@@ -16,10 +16,10 @@ public class Pinpoint {
     public Pinpoint(GoBildaPinpointDriver pinpoint){
         this.pinpoint = pinpoint;
 
-        pinpoint.setOffsets(0, 0, DistanceUnit.MM);
+        pinpoint.setOffsets(0, 55, DistanceUnit.MM);
         pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         pinpoint.setEncoderDirections(
-                GoBildaPinpointDriver.EncoderDirection.FORWARD,
+                GoBildaPinpointDriver.EncoderDirection.REVERSED,
                 GoBildaPinpointDriver.EncoderDirection.FORWARD
         );
 

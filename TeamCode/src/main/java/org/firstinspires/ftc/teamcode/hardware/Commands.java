@@ -28,7 +28,7 @@ public class Commands {
         DriveInput driveInput = robot.input;
         Pinpoint pinpoint = robot.pinpoint;
 
-        freeRide = new FreeRide(mecanumDrive, driveInput, pinpoint);
+        freeRide = new FreeRide(mecanumDrive, driveInput, pinpoint, 1);
         cameraScan = new CameraScan(pipeline);
         poseResetFromCamera = new PoseResetFromCamera(camLocal, pinpoint);
         updateFromPinpoint = new UpdateFromPinpoint(pinpoint, paths, pedro, driveInput, camLocal);

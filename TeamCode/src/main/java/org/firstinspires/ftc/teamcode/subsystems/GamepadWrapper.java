@@ -5,8 +5,34 @@ import org.firstinspires.ftc.teamcode.scheduler.Command;
 import org.firstinspires.ftc.teamcode.scheduler.CommandScheduler;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+
+/*⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣬⣾⣮⠄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⢠⣠⣴⣿⡿⣿⣧⣤⡀⡀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠨⢿⡷⣾⡿⢳⠿⣿⣶⣿⢖⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣯⣏⣿⣿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⢀⣀⡄⠀⠀⠀⠀⠀⣠⣿⡼⣾⣇⡀⠀⠀⠀⠀⠀⣀⠄⠀⠀⠀
+⠀⠀⣾⢿⣱⠀⠀⠀⠀⣰⣭⣿⣿⣿⣿⣇⢀⠀⠀⠀⣐⣾⣿⠀⠀⠀
+⣄⣦⣿⡿⣿⠷⣾⣿⣷⡟⣷⣿⣿⣿⣷⡟⣷⣿⣷⡾⣟⠿⣿⣤⣆⠄
+⠙⠻⠿⣿⣏⣿⣷⠿⢿⢟⡏⣿⣿⣿⣟⣿⢟⡿⠷⣿⣻⣿⡿⠿⠋⠈
+⠀⠀⠀⠩⢻⣿⡄⠀⠀⠈⠻⣼⣿⣿⡸⠋⠁⠀⠀⢸⡿⡓⠁⠀⠀⠀
+⠀⠀⠀⠀⠀⠙⠀⠀⠀⠀⠀⢿⣿⣿⠃⠀⠀⠀⠀⠘⠉⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣺⣿⣿⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣹⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⣿⣿⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣽⣿⣿⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⢷⢿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⣿⠋⢟⣿⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⣀⣿⣿⣫⣆⣮⣛⣿⡅⡀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠸⠿⣿⣿⣿⡄⣿⣿⣿⠿⠮⠆⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⢿⣽⣝⣽⣽⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢻⣿⣿⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀*/
+
+//Daca are asta vreun bug s-a dus dracu robotu
 
 public class GamepadWrapper {
     public enum Button {
@@ -24,11 +50,13 @@ public class GamepadWrapper {
     private final Gamepad gamepad;
     private final CommandScheduler scheduler;
 
-    private final Map<Button, Supplier<Command>> onPress = new HashMap<>();
+    private final Map<Button, Builder.CycleBinding> onPress = new HashMap<>();
     private final Map<Button, Supplier<Command>> whileHeld = new HashMap<>();
-    private final Map<Analog, AnalogBinding> analogThresholds = new HashMap<>();
     private final Map<Button, Boolean> previousButtonStates = new HashMap<>();
+
+    private final Map<Analog, AnalogBinding> analogThresholds = new HashMap<>();
     private final Map<Analog, Boolean> previousAnalogAbove = new HashMap<>();
+
     private final Map<Button, Command> activeHeldCommands = new HashMap<>();
 
     private static class AnalogBinding {
@@ -48,52 +76,9 @@ public class GamepadWrapper {
 
     /** Call this every loop */
     public void update() {
-        // onPress
-        for (Map.Entry<Button, Supplier<Command>> entry : onPress.entrySet()) {
-            Button button = entry.getKey();
-            boolean current = getButtonState(button);
-            boolean previous = previousButtonStates.getOrDefault(button, false);
-
-            if (current && !previous) {
-                scheduler.schedule(entry.getValue().get());
-            }
-
-            previousButtonStates.put(button, current);
-        }
-
-        // whileHeld
-        for (Map.Entry<Button, Supplier<Command>> entry : whileHeld.entrySet()) {
-            Button button = entry.getKey();
-            boolean pressed = getButtonState(button);
-            Command activeCommand = activeHeldCommands.get(button);
-
-            if (pressed) {
-                if (activeCommand == null || !scheduler.isScheduled(activeCommand)) {
-                    Command cmd = entry.getValue().get();
-                    scheduler.schedule(cmd);
-                    activeHeldCommands.put(button, cmd);
-                }
-            } else {
-                if (activeCommand != null && scheduler.isScheduled(activeCommand)) {
-                    scheduler.cancel(activeCommand);
-                }
-                activeHeldCommands.remove(button);
-            }
-        }
-
-        // analog thresholds
-        for (Map.Entry<Analog, AnalogBinding> entry : analogThresholds.entrySet()) {
-            Analog analog = entry.getKey();
-            double value = getAnalogInput(analog);
-            boolean above = Math.abs(value) > entry.getValue().threshold;
-            boolean wasAbove = previousAnalogAbove.getOrDefault(analog, false);
-
-            if (above && !wasAbove) {
-                scheduler.schedule(entry.getValue().commandSupplier.get());
-            }
-
-            previousAnalogAbove.put(analog, above);
-        }
+        onPressUpdate();
+        whileHeldUpdate();
+        whenAboveUpdate();
     }
 
     private boolean getButtonState(Button button) {
@@ -124,6 +109,59 @@ public class GamepadWrapper {
         }
     }
 
+    private void onPressUpdate() {
+        for (Map.Entry<Button, Builder.CycleBinding> entry : onPress.entrySet()) {
+            Button button = entry.getKey();
+            boolean current = getButtonState(button);
+            boolean previous = previousButtonStates.getOrDefault(button, false);
+
+            if (current && !previous) {
+                scheduler.schedule(entry.getValue().next());
+            }
+
+            previousButtonStates.put(button, current);
+        }
+    }
+
+
+    private void whileHeldUpdate(){
+        // whileHeld
+        for (Map.Entry<Button, Supplier<Command>> entry : whileHeld.entrySet()) {
+            Button button = entry.getKey();
+            boolean pressed = getButtonState(button);
+            Command activeCommand = activeHeldCommands.get(button);
+
+            if (pressed) {
+                if (activeCommand == null || !scheduler.isScheduled(activeCommand)) {
+                    Command cmd = entry.getValue().get();
+                    scheduler.schedule(cmd);
+                    activeHeldCommands.put(button, cmd);
+                }
+            } else {
+                if (activeCommand != null && scheduler.isScheduled(activeCommand)) {
+                    scheduler.cancel(activeCommand);
+                }
+                activeHeldCommands.remove(button);
+            }
+        }
+    }
+
+    private void whenAboveUpdate(){
+        // analog thresholds
+        for (Map.Entry<Analog, AnalogBinding> entry : analogThresholds.entrySet()) {
+            Analog analog = entry.getKey();
+            double value = getAnalogInput(analog);
+            boolean above = Math.abs(value) > entry.getValue().threshold;
+            boolean wasAbove = previousAnalogAbove.getOrDefault(analog, false);
+
+            if (above && !wasAbove) {
+                scheduler.schedule(entry.getValue().commandSupplier.get());
+            }
+
+            previousAnalogAbove.put(analog, above);
+        }
+    }
+
     public static class Builder {
         private final GamepadWrapper wrapper;
 
@@ -135,8 +173,38 @@ public class GamepadWrapper {
             this.wrapper = wrapper;
         }
 
-        public Builder onPress(Button button, Supplier<Command> commandSupplier) {
-            wrapper.onPress.put(button, commandSupplier);
+        private static class CycleBinding {
+            List<Supplier<Command>> commands = new java.util.ArrayList<>();
+            int index = 0;
+
+            void add(Supplier<Command> cmd) {
+                commands.add(cmd);
+            }
+
+            Command next() {
+                Command cmd = commands.get(index).get();
+                index = (index + 1) % commands.size();
+                return cmd;
+            }
+        }
+
+        //just for the sake of it 2 ways of defining these so I can have choices (:
+        //and also for the sake of letting the user chose what feels more natural
+        //nu stiu de ce fac comenturile in engleza da aia e
+        public Builder onPress(Button button, Supplier<Command>... commands) {
+            CycleBinding binding = wrapper.onPress.computeIfAbsent(button, k -> new CycleBinding());
+            for (Supplier<Command> cmd : commands) {
+                binding.add(cmd);
+            }
+            return this;
+        }
+
+        public Builder onPress(Button button, int index, Supplier<Command> command) {
+            CycleBinding binding = wrapper.onPress.computeIfAbsent(button, k -> new CycleBinding());
+            while (binding.commands.size() <= index) {
+                binding.commands.add(null);
+            }
+            binding.commands.set(index, command);
             return this;
         }
 
