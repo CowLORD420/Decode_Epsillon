@@ -116,6 +116,7 @@ public class GamepadWrapper {
             boolean previous = previousButtonStates.getOrDefault(button, false);
 
             if (current && !previous) {
+                scheduler.cancel(entry.getValue().last());
                 scheduler.schedule(entry.getValue().next());
             }
 
@@ -181,10 +182,13 @@ public class GamepadWrapper {
                 commands.add(cmd);
             }
 
+            Command last() {
+                return commands.get(index).get();
+            }
+
             Command next() {
-                Command cmd = commands.get(index).get();
                 index = (index + 1) % commands.size();
-                return cmd;
+                return commands.get(index).get();
             }
         }
 

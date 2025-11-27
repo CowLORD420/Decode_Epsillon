@@ -61,11 +61,7 @@ public class Pedro {
         follower.update();
     }
 
-    public void start(){
-        follower.resumePathFollowing();
-    }
-
     public void stop(){
-        follower.pausePathFollowing();
+        follower.breakFollowing();
     }
 }

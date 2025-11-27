@@ -39,20 +39,6 @@ public class Paths {
         }
     }
 
-    /*public enum LazyPaths{
-        SCORE1("score1"),
-        SCORE2("score2");
-        private final String name;
-
-        LazyPaths(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-    }*/
-
     public enum PrebuiltPaths {
         AUTO1("auto1");
 
@@ -67,20 +53,6 @@ public class Paths {
         }
     }
 
-    /*public enum EndPose{
-        SCORE1(0, 0, Math.toRadians(50));
-
-        private final Pose pose;
-
-        EndPose(double x, double y, double heading) {
-            this.pose = new Pose(x, y, heading);
-        }
-
-        public Pose getPose() {
-            return pose;
-        }
-    }*/
-
     public Paths(Follower follower, Pedro pedro){
         this.follower = follower;
         this.pedro = pedro;
@@ -89,6 +61,9 @@ public class Paths {
     public void registerLazyPath(String pathName, Pose pose){
         pedro.addLazyPath(pathName, lazyPath(pose));
     }
+
+    //function that builds all prebuilt paths at init of auto
+    /** To do make it so it only builds the ones it needs based on start position and color and etc **/
 
     public void registerPrebuiltPaths() {
         pedro.addPrebuiltPath(PrebuiltPaths.AUTO1.getName(), prebuiltPath(startPose, endPose));
