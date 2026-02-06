@@ -9,9 +9,9 @@ public class GoTo implements Command {
     private final Paths.PrebuiltPaths path;
     private final Pedro pedro;
 
-    public GoTo(Robot robot, Paths.PrebuiltPaths path) {
+    public GoTo(Pedro pedro, Paths.PrebuiltPaths path) {
         this.path = path;
-        pedro = robot.pedro;
+        this.pedro = pedro;
     }
 
     @Override
@@ -20,7 +20,9 @@ public class GoTo implements Command {
     }
 
     @Override
-    public void update() { }
+    public void update() {
+        pedro.update();
+    }
 
     @Override
     /** trebuie sa verific altfel asta ca nu e recomandata metoda asta da whatever **/

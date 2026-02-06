@@ -43,7 +43,6 @@ public class UpdateFromPinpoint implements Command {
         paths.updatePose(currentPose);
         pedro.updatePose(currentPose);
         input.updateHeading(pinpoint.getYaw());
-        cameraLocalization.updateHeading(pinpoint.getYaw());
     }
 
     @Override

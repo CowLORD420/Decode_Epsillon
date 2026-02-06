@@ -3,17 +3,17 @@ package org.firstinspires.ftc.teamcode.commands;
 import org.firstinspires.ftc.teamcode.scheduler.Command;
 import org.firstinspires.ftc.teamcode.scheduler.SwitchCommandGroup;
 
-public class Switch<E extends Enum<E>> implements Command {
+public class SwitchTo<E extends Enum<E>> implements Command {
 
     private final SwitchCommandGroup<E> switchCommandGroup;
     private final E name;
 
-    public Switch(SwitchCommandGroup<E> switchCommandGroup){
+    public SwitchTo(SwitchCommandGroup<E> switchCommandGroup){
         this.switchCommandGroup = switchCommandGroup;
         name = null;
     }
 
-    public Switch(SwitchCommandGroup<E> switchCommandGroup, E name) {
+    public SwitchTo(SwitchCommandGroup<E> switchCommandGroup, E name) {
         this.switchCommandGroup = switchCommandGroup;
         this.name = name;
     }

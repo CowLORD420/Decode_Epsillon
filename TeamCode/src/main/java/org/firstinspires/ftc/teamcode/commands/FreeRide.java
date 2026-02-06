@@ -25,6 +25,7 @@ public class FreeRide implements Command {
 
     @Override
     public void update() {
+        input.update();
         input.updateHeading(pinpoint.getYaw());
         double y = input.getY() * maxSpeed;
         double x = input.getX() * maxSpeed;

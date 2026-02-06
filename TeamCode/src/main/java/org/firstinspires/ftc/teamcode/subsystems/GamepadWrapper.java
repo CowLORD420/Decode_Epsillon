@@ -4,37 +4,11 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.teamcode.scheduler.Command;
 import org.firstinspires.ftc.teamcode.scheduler.CommandScheduler;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 
-/*⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣬⣾⣮⠄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⢠⣠⣴⣿⡿⣿⣧⣤⡀⡀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠨⢿⡷⣾⡿⢳⠿⣿⣶⣿⢖⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣯⣏⣿⣿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⢀⣀⡄⠀⠀⠀⠀⠀⣠⣿⡼⣾⣇⡀⠀⠀⠀⠀⠀⣀⠄⠀⠀⠀
-⠀⠀⣾⢿⣱⠀⠀⠀⠀⣰⣭⣿⣿⣿⣿⣇⢀⠀⠀⠀⣐⣾⣿⠀⠀⠀
-⣄⣦⣿⡿⣿⠷⣾⣿⣷⡟⣷⣿⣿⣿⣷⡟⣷⣿⣷⡾⣟⠿⣿⣤⣆⠄
-⠙⠻⠿⣿⣏⣿⣷⠿⢿⢟⡏⣿⣿⣿⣟⣿⢟⡿⠷⣿⣻⣿⡿⠿⠋⠈
-⠀⠀⠀⠩⢻⣿⡄⠀⠀⠈⠻⣼⣿⣿⡸⠋⠁⠀⠀⢸⡿⡓⠁⠀⠀⠀
-⠀⠀⠀⠀⠀⠙⠀⠀⠀⠀⠀⢿⣿⣿⠃⠀⠀⠀⠀⠘⠉⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣺⣿⣿⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣹⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⣿⣿⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣽⣿⣿⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⢷⢿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⣿⠋⢟⣿⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⣀⣿⣿⣫⣆⣮⣛⣿⡅⡀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠸⠿⣿⣿⣿⡄⣿⣿⣿⠿⠮⠆⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⢿⣽⣝⣽⣽⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢻⣿⣿⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀*/
-
-//Daca are asta vreun bug s-a dus dracu robotu
-
 public class GamepadWrapper {
+
     public enum Button {
         A, B, X, Y,
         LEFT_BUMPER, RIGHT_BUMPER,
@@ -50,36 +24,63 @@ public class GamepadWrapper {
     private final Gamepad gamepad;
     private final CommandScheduler scheduler;
 
-    private final Map<Button, Builder.CycleBinding> onPress = new HashMap<>();
+    private final Map<Button, CycleBinding> onPress = new HashMap<>();
     private final Map<Button, Supplier<Command>> whileHeld = new HashMap<>();
+    private final Map<Button, Command> activeHeldCommands = new HashMap<>();
     private final Map<Button, Boolean> previousButtonStates = new HashMap<>();
 
     private final Map<Analog, AnalogBinding> analogThresholds = new HashMap<>();
     private final Map<Analog, Boolean> previousAnalogAbove = new HashMap<>();
 
-    private final Map<Button, Command> activeHeldCommands = new HashMap<>();
+    /* ================= INTERNAL ================= */
 
     private static class AnalogBinding {
         double threshold;
-        Supplier<Command> commandSupplier;
+        Supplier<Command> supplier;
+        Command activeInstance;
 
-        AnalogBinding(double threshold, Supplier<Command> commandSupplier) {
+        AnalogBinding(double threshold, Supplier<Command> supplier) {
             this.threshold = threshold;
-            this.commandSupplier = commandSupplier;
+            this.supplier = supplier;
         }
     }
+
+    private static class CycleBinding {
+        final List<Supplier<Command>> suppliers = new ArrayList<>();
+        int index = -1; // start before first
+        Command activeInstance;
+
+        void add(Supplier<Command> supplier) {
+            if (supplier == null) throw new IllegalArgumentException("Command supplier cannot be null");
+            suppliers.add(supplier);
+        }
+
+        Command current() {
+            return activeInstance;
+        }
+
+        Command next() {
+            index = (index + 1) % suppliers.size();
+            activeInstance = suppliers.get(index).get();
+            return activeInstance;
+        }
+    }
+
 
     private GamepadWrapper(Gamepad gamepad, CommandScheduler scheduler) {
         this.gamepad = gamepad;
         this.scheduler = scheduler;
     }
 
-    /** Call this every loop */
+    /* ================= UPDATE ================= */
+
     public void update() {
         onPressUpdate();
         whileHeldUpdate();
         whenAboveUpdate();
     }
+
+    /* ================= INPUT ================= */
 
     private boolean getButtonState(Button button) {
         switch (button) {
@@ -109,15 +110,21 @@ public class GamepadWrapper {
         }
     }
 
+    /* ================= LOGIC ================= */
+
     private void onPressUpdate() {
-        for (Map.Entry<Button, Builder.CycleBinding> entry : onPress.entrySet()) {
+        for (Map.Entry<Button, CycleBinding> entry : onPress.entrySet()) {
             Button button = entry.getKey();
             boolean current = getButtonState(button);
             boolean previous = previousButtonStates.getOrDefault(button, false);
 
             if (current && !previous) {
-                scheduler.cancel(entry.getValue().last());
-                scheduler.schedule(entry.getValue().next());
+                CycleBinding binding = entry.getValue();
+                Command old = binding.current();    // save previous command
+                Command next = binding.next();      // get new command
+
+                scheduler.schedule(next);           // schedule new command
+                if (old != null) scheduler.cancel(old); // cancel previous
             }
 
             previousButtonStates.put(button, current);
@@ -125,43 +132,47 @@ public class GamepadWrapper {
     }
 
 
-    private void whileHeldUpdate(){
-        // whileHeld
+
+    private void whileHeldUpdate() {
         for (Map.Entry<Button, Supplier<Command>> entry : whileHeld.entrySet()) {
             Button button = entry.getKey();
             boolean pressed = getButtonState(button);
-            Command activeCommand = activeHeldCommands.get(button);
+            Command active = activeHeldCommands.get(button);
 
             if (pressed) {
-                if (activeCommand == null || !scheduler.isScheduled(activeCommand)) {
+                if (active == null || !scheduler.isScheduled(active)) {
                     Command cmd = entry.getValue().get();
                     scheduler.schedule(cmd);
                     activeHeldCommands.put(button, cmd);
                 }
             } else {
-                if (activeCommand != null && scheduler.isScheduled(activeCommand)) {
-                    scheduler.cancel(activeCommand);
+                if (active != null && scheduler.isScheduled(active)) {
+                    scheduler.cancel(active);
                 }
                 activeHeldCommands.remove(button);
             }
         }
     }
 
-    private void whenAboveUpdate(){
-        // analog thresholds
+    private void whenAboveUpdate() {
         for (Map.Entry<Analog, AnalogBinding> entry : analogThresholds.entrySet()) {
             Analog analog = entry.getKey();
+            AnalogBinding binding = entry.getValue();
+
             double value = getAnalogInput(analog);
-            boolean above = Math.abs(value) > entry.getValue().threshold;
+            boolean above = Math.abs(value) > binding.threshold;
             boolean wasAbove = previousAnalogAbove.getOrDefault(analog, false);
 
             if (above && !wasAbove) {
-                scheduler.schedule(entry.getValue().commandSupplier.get());
+                binding.activeInstance = binding.supplier.get();
+                scheduler.schedule(binding.activeInstance);
             }
 
             previousAnalogAbove.put(analog, above);
         }
     }
+
+    /* ================= BUILDER ================= */
 
     public static class Builder {
         private final GamepadWrapper wrapper;
@@ -170,45 +181,16 @@ public class GamepadWrapper {
             wrapper = new GamepadWrapper(gamepad, scheduler);
         }
 
-        public Builder(GamepadWrapper wrapper) {
-            this.wrapper = wrapper;
+        public Builder(GamepadWrapper gamepadWrapper){
+            wrapper = gamepadWrapper;
         }
 
-        private static class CycleBinding {
-            List<Supplier<Command>> commands = new java.util.ArrayList<>();
-            int index = 0;
-
-            void add(Supplier<Command> cmd) {
-                commands.add(cmd);
-            }
-
-            Command last() {
-                return commands.get(index).get();
-            }
-
-            Command next() {
-                index = (index + 1) % commands.size();
-                return commands.get(index).get();
-            }
-        }
-
-        //just for the sake of it 2 ways of defining these so I can have choices (:
-        //and also for the sake of letting the user chose what feels more natural
-        //nu stiu de ce fac comenturile in engleza da aia e
-        public Builder onPress(Button button, Supplier<Command>... commands) {
-            CycleBinding binding = wrapper.onPress.computeIfAbsent(button, k -> new CycleBinding());
+        @SafeVarargs
+        public final Builder onPress(Button button, Supplier<Command>... commands) {
+            CycleBinding binding = wrapper.onPress.computeIfAbsent(button, b -> new CycleBinding());
             for (Supplier<Command> cmd : commands) {
                 binding.add(cmd);
             }
-            return this;
-        }
-
-        public Builder onPress(Button button, int index, Supplier<Command> command) {
-            CycleBinding binding = wrapper.onPress.computeIfAbsent(button, k -> new CycleBinding());
-            while (binding.commands.size() <= index) {
-                binding.commands.add(null);
-            }
-            binding.commands.set(index, command);
             return this;
         }
 

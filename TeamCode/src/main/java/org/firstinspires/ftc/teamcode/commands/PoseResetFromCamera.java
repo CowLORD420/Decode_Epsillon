@@ -17,9 +17,7 @@ public class PoseResetFromCamera implements Command {
 
     @Override
     public void start() {
-        cameraLocalization.start();
-        Pose2D pose2D = cameraLocalization.getPose2d();
-        pinpoint.resetPose(pose2D);
+
     }
 
     @Override

@@ -1,55 +1,58 @@
 package org.firstinspires.ftc.teamcode.scheduler;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class SequentialCommandGroup implements Command {
 
-    private List<Command> commands = new ArrayList<>();
-    private int currentIndex = 0; // which command is active
+    private final List<Supplier<Command>> suppliers;
+    private int currentIndex = 0;
 
-    public SequentialCommandGroup(Command... cmds) {
-        for (Command c : cmds) {
-            commands.add(c);
-        }
+    private Command currentCommand = null;
+
+    public SequentialCommandGroup(Supplier<Command>... cmds) {
+        this.suppliers = Arrays.asList(cmds);
     }
 
     @Override
     public void start() {
-        if (!commands.isEmpty()) {
-            commands.get(0).start(); // start the first command
+        if (!suppliers.isEmpty()) {
+            currentCommand = suppliers.get(0).get();
+            currentCommand.start();
         }
     }
 
     @Override
     public void update() {
-        if (currentIndex >= commands.size()) return; // nothing left to do
+        if (currentCommand == null) return;
 
-        Command current = commands.get(currentIndex);
-        current.update();
+        currentCommand.update();
 
-        if (current.isFinished()) {
-            current.end();
+        if (currentCommand.isFinished()) {
+            currentCommand.end();
             currentIndex++;
 
-            // start the next one, if it exists
-            if (currentIndex < commands.size()) {
-                commands.get(currentIndex).start();
+            if (currentIndex < suppliers.size()) {
+                currentCommand = suppliers.get(currentIndex).get();
+                currentCommand.start();
+            } else {
+                currentCommand = null;
             }
         }
     }
 
     @Override
     public boolean isFinished() {
-        return currentIndex >= commands.size();
+        return currentIndex >= suppliers.size();
     }
 
     @Override
     public void end() {
-        // cleanup: make sure all remaining commands are ended
-        while (currentIndex < commands.size()) {
-            commands.get(currentIndex).end();
-            currentIndex++;
+        if (currentCommand != null) {
+            currentCommand.end();
+            currentCommand = null;
         }
+        currentIndex = suppliers.size();
     }
 }

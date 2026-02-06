@@ -1,15 +1,14 @@
 package org.firstinspires.ftc.teamcode.scheduler;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ParallelCommand implements Command {
-    private List<Command> commands = new ArrayList<>();
+    private final List<Command> commands = new ArrayList<>();
 
     public ParallelCommand(Command... cmds) {
-        for (Command c : cmds) {
-            commands.add(c);
-        }
+        commands.addAll(Arrays.asList(cmds));
     }
 
     @Override

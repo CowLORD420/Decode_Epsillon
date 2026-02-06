@@ -15,8 +15,8 @@ public class Paths {
     private final Follower follower;
     private Pose currentPose;
 
-    Pose startPose = new Pose(0,0,Math.toRadians(0));
-    Pose endPose = new Pose(50, 50, Math.toRadians(90));
+    Pose startPose = new Pose(1,2,Math.toRadians(0));
+    Pose endPose = new Pose(50, 50, Math.toRadians(0));
 
     public enum LazyPaths {
         SCORE1("score1", 0, 0, Math.toRadians(50)),

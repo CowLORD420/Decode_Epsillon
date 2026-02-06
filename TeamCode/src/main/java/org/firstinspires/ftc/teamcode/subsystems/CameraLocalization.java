@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 import java.util.List;
@@ -14,9 +13,11 @@ import java.util.List;
 public class CameraLocalization {
     private final Limelight3A limelight;
     private Pose3D pose = null;
-    private boolean running;
-    private int latestTagId;
+    private boolean running = false;
+    private int latestTagId = 0;
     private double yaw;
+    private LLResult result;
+    private static final double EPSILON = 0;
 
     public CameraLocalization(Limelight3A limelight3A){
         this.limelight = limelight3A;
@@ -27,8 +28,8 @@ public class CameraLocalization {
     public void update (){
         if(!running) return;
 
-        limelight.updateRobotOrientation(yaw);
-        LLResult result = limelight.getLatestResult();
+        limelight.updateRobotOrientation(Math.toDegrees(yaw));
+        result = limelight.getLatestResult();
 
         if (result != null) {
             List<LLResultTypes.FiducialResult> fiducials = result.getFiducialResults();
@@ -36,27 +37,54 @@ public class CameraLocalization {
             if (fiducials != null && !fiducials.isEmpty()) {
                 latestTagId = fiducials.get(0).getFiducialId();
             }
-
-            pose = result.getBotpose_MT2();
             return;
         }
 
         pose = null;
     }
 
+    public double getTxError() {
+        if (result == null) return 0;
+
+        if (Math.abs(result.getTx()) < EPSILON) return 0;
+        return result.getTx(); // degrees
+    }
+
+
     public void changePipeline(int pipelineNumber){
         limelight.pipelineSwitch(pipelineNumber);
     }
 
-    public void updateHeading(double headingInRadians){
-        yaw = headingInRadians;
+    public void updateHeading(double headingInRadians){ yaw = headingInRadians; }
+
+    private Pose3D megaTag(){ return result.getBotpose(); }
+
+    private Pose3D megaTag2(){ return result.getBotpose_MT2(); }
+    public int getLatestTagId() { return latestTagId; }
+
+    public double getX1(){ return megaTag().getPosition().x; }
+    public double getY1() { return megaTag().getPosition().y; }
+
+    public double getX2() { return megaTag2().getPosition().x; }
+    public double getY2() { return megaTag2().getPosition().y; }
+    public double getCamYaw () { return pose.getOrientation().getYaw(AngleUnit.RADIANS); }
+
+    public ColorSensor.DetectedColor getColor1(){
+        if (getLatestTagId() == 22) return  ColorSensor.DetectedColor.PURPLE;
+        else if (getLatestTagId() == 23) return ColorSensor.DetectedColor.PURPLE;
+        else return ColorSensor.DetectedColor.GREEN;
     }
 
-    public Pose2D getPose2d(){ return Pose3Dto2D(pose); }
-    public int getLatestTagId() { return latestTagId; }
-    public double getCamX() { return pose.getPosition().x; }
-    public double getCamY() { return pose.getPosition().y; }
-    public double getCamYaw () { return pose.getOrientation().getYaw(AngleUnit.RADIANS); }
+    public ColorSensor.DetectedColor getColor2(){
+        if (getLatestTagId() == 22) return  ColorSensor.DetectedColor.GREEN;
+        else if (getLatestTagId() == 23) return ColorSensor.DetectedColor.PURPLE;
+        else return ColorSensor.DetectedColor.PURPLE;
+    }
+    public ColorSensor.DetectedColor getColor3(){
+        if (getLatestTagId() == 22) return  ColorSensor.DetectedColor.PURPLE;
+        else if (getLatestTagId() == 23) return ColorSensor.DetectedColor.GREEN;
+        else return ColorSensor.DetectedColor.PURPLE;
+    }
 
     public void start() {
         limelight.start();
@@ -67,10 +95,5 @@ public class CameraLocalization {
         limelight.stop();
         running = false;
         pose = null;
-    }
-
-    private Pose2D Pose3Dto2D (Pose3D pose3D){
-        Pose2D pose2D = new Pose2D(DistanceUnit.INCH, pose3D.getPosition().x, pose3D.getPosition().y, AngleUnit.RADIANS, pose3D.getOrientation().getYaw(AngleUnit.RADIANS));
-        return pose2D;
     }
 }
